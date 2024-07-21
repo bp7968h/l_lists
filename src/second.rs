@@ -1,18 +1,18 @@
-pub struct List {
-    head: Option<Box<Node>>,
+pub struct List<T>{
+    head: Option<Box<Node<T>>>,
 }
 
-struct Node {
-    elem: i32,
-    next: Option<Box<Node>>
+struct Node<T>{
+    elem: T,
+    next: Option<Box<Node<T>>>
 }
 
-impl List {
+impl<T> List<T> {
     pub fn new() -> Self {
         List {head: None}
     }
 
-    pub fn push(&mut self, elem: i32){
+    pub fn push(&mut self, elem: T){
         let new_node = Box::new(Node{
             elem,
             next: self.head.take()
@@ -21,7 +21,7 @@ impl List {
         self.head = Some(new_node);
     }
 
-    pub fn pop(&mut self) -> Option<i32> {
+    pub fn pop(&mut self) -> Option<T> {
         self.head.take().map(|node| {
             self.head = node.next;
             node.elem
@@ -29,7 +29,7 @@ impl List {
     }
 }
 
-impl Drop for List {
+impl<T> Drop for List<T> {
     fn drop(&mut self){
         let mut cur_link = self.head.take();
         while let Some(mut boxed_node) = cur_link {
@@ -44,7 +44,7 @@ mod test {
 
     #[test]
     fn basics() {
-        let mut list = List::new();
+        let mut list = List::<i32>::new();
 
         // Check empty list behaves right
         assert_eq!(list.pop(), None);
